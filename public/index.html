@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MagnetDrop - Instant File Sharing</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-4">
+
+    <div class="absolute top-4 right-4 flex gap-3">
+        <a href="how-it-works.html" class="bg-gray-800 px-3 py-1 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-700 transition">
+            ❓ How It Works
+        </a>
+        <a href="https://github.com/your-repo/magnetdrop" target="_blank" class="bg-gray-800 px-3 py-1 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-700 transition">
+            <i class="ph ph-github"></i> Star on GitHub
+        </a>
+    </div>
+
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-lg text-center animate-fade-in">
+        <h2 class="text-3xl font-bold mb-4 flex items-center justify-center gap-2">
+            <i class="ph ph-paper-plane-tilt"></i> MagnetDrop
+        </h2>
+        <p class="text-gray-400 mb-4">Share files instantly using Magnet Links!</p>
+
+        <div class="flex flex-col items-center gap-3">
+            <input type="file" id="fileInput" class="p-2 rounded bg-gray-700 text-white border border-gray-600">
+            <button onclick="shareFile()" class="px-4 py-2 bg-blue-500 rounded-lg shadow-md flex items-center gap-2 hover:bg-blue-600 transition">
+                <i class="ph ph-share-fat"></i> Share File
+            </button>
+        </div>
+
+        <p id="status" class="mt-4 text-green-400 font-semibold"></p>
+        <p id="fileInfo" class="text-gray-300"></p>
+        <p id="shareLink" class="text-blue-400"></p>
+
+        <div id="qrCode" class="mt-4 flex justify-center"></div>
+
+        <button id="downloadBtn" class="hidden mt-4 px-4 py-2 bg-green-500 rounded-lg shadow-md flex items-center gap-2 hover:bg-green-600 transition justify-center flex" onclick="startDownload()">
+            <i class="ph ph-download-simple"></i> Download File
+        </button>
+    </div>
+
+    <script>
+        const client = new WebTorrent();
+        const socket = new WebSocket("ws://localhost:3000");
+
+        function shareFile() {
+            const file = document.getElementById("fileInput").files[0];
+            if (!file) return alert("Select a file!");
+
+            client.seed(file, (torrent) => {
+                const magnetURI = torrent.magnetURI;
+                socket.send(JSON.stringify({ type: "share", magnet: magnetURI }));
+                document.getElementById("fileInfo").innerText = `File: ${file.name}`;
+                
+                socket.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    if (data.type === "shortURL") {
+                        document.getElementById("shareLink").innerHTML = `<a href="${data.url}" target="_blank" class="text-blue-400 hover:underline">${data.url}</a>`;
+                        generateQRCode(data.url);
+                    }
+                };
+                document.getElementById("status").innerText = "Share this link to download!";
+            });
+        }
+
+        let magnetLink;
+        let receivedFile;
+
+        function autoDownload(magnet) {
+            client.add(magnet, (torrent) => {
+                magnetLink = magnet;
+                receivedFile = torrent.files[0];
+                document.getElementById("fileInfo").innerText = `File: ${receivedFile.name}`;
+                document.getElementById("downloadBtn").classList.remove("hidden");
+                document.getElementById("status").innerText = "Ready to download!";
+            });
+        }
+
+        function startDownload() {
+            if (!receivedFile) return;
+            receivedFile.getBlobURL((err, url) => {
+                if (err) return console.error(err);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = receivedFile.name;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        }
+
+        function generateQRCode(url) {
+            document.getElementById("qrCode").innerHTML = "";
+            new QRCode(document.getElementById("qrCode"), {
+                text: url,
+                width: 128,
+                height: 128,
+                colorDark: "#ffffff",
+                colorLight: "#1e293b"
+            });
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("magnet")) {
+            autoDownload(decodeURIComponent(params.get("magnet")));
+        }
+    </script>
+
+</body>
+</html>
