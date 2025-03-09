@@ -1,4 +1,6 @@
-# ![MagnetDrop Logo](https://res.cloudinary.com/dgxxrnmkt/image/upload/v1741509088/MagnetDrop_Logo-removebg-preview_1_oleubc.png)
+<div align="center">
+  <img src="https://res.cloudinary.com/dgxxrnmkt/image/upload/v1741509088/MagnetDrop_Logo-removebg-preview_1_oleubc.png" alt="MagnetDrop Logo" width="250" height="250" />
+</div>
 
 # MagnetDrop - Secure P2P File Sharing
 
@@ -65,7 +67,7 @@ npm install
 
 ### Run the Application
 ```sh
-node server 
+node server
 ```
 
 ## License
