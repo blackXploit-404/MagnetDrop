@@ -48,7 +48,7 @@
 
     <script>
         const client = new WebTorrent();
-        const socket = new WebSocket("ws://localhost:3000");
+        const socket = new WebSocket("wss://magnetdrop.onrender.com");
 
         function shareFile() {
             const file = document.getElementById("fileInput").files[0];
