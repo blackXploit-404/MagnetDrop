@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MagnetDrop - Secure P2P File Sharing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <!-- Header -->
+    <header class="text-center py-6 bg-gray-800">
+        <h1 class="text-3xl font-bold">MagnetDrop - Secure P2P File Sharing</h1>
+        <p class="text-gray-400">Instantly share files without uploading to a server.</p>
+    </header>
+
+    <!-- Introduction -->
+    <section class="max-w-4xl mx-auto p-6">
+        <h2 class="text-2xl font-bold text-blue-400">What is MagnetDrop?</h2>
+        <p class="mt-2 text-gray-300">
+            MagnetDrop is a peer-to-peer (P2P) file-sharing service that allows users to share files instantly using WebTorrent technology. 
+            Unlike traditional cloud storage, your files are **never uploaded to a server**—they are streamed **directly between users**.
+        </p>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="max-w-4xl mx-auto p-6">
+        <h2 class="text-2xl font-bold text-blue-400">Frequently Asked Questions</h2>
+
+        <div class="mt-4">
+            <h3 class="text-lg font-semibold text-green-400">1. Does MagnetDrop use the torrent network?</h3>
+            <p class="text-gray-300">Yes, MagnetDrop uses WebTorrent, which allows files to be shared using **torrent-like** technology but without public trackers.</p>
+        </div>
+
+        <div class="mt-4">
+            <h3 class="text-lg font-semibold text-green-400">2. Can anyone download my file?</h3>
+            <p class="text-gray-300">
+                No, only people who have the **magnet link** can access the file. The file is not stored on any server, and it disappears once the original uploader closes their browser.
+            </p>
+        </div>
+
+        <div class="mt-4">
+            <h3 class="text-lg font-semibold text-green-400">3. How does MagnetDrop transmit files?</h3>
+            <p class="text-gray-300">
+                Files are **split into small chunks** and transmitted **peer-to-peer (P2P)** using **WebRTC**. This allows real-time streaming without needing a central server.
+            </p>
+        </div>
+
+        <div class="mt-4">
+            <h3 class="text-lg font-semibold text-green-400">4. Is there any risk of file leakage?</h3>
+            <p class="text-gray-300">
+                No, files are **not discoverable** on public torrent networks. However, **anyone with the magnet link can download the file**, so users should share links carefully.
+            </p>
+        </div>
+
+        <div class="mt-4">
+            <h3 class="text-lg font-semibold text-green-400">5. What happens if I close my browser?</h3>
+            <p class="text-gray-300">
+                If you are the only seeder, the file becomes **unavailable**. If others are downloading it, they may continue seeding it after you leave.
+            </p>
+        </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section class="max-w-4xl mx-auto p-6">
+        <h2 class="text-2xl font-bold text-blue-400">Comparison with Other Services</h2>
+        <div class="overflow-x-auto mt-4">
+            <table class="w-full border-collapse border border-gray-700">
+                <thead>
+                    <tr class="bg-gray-800">
+                        <th class="border border-gray-600 p-2">Feature</th>
+                        <th class="border border-gray-600 p-2">MagnetDrop</th>
+                        <th class="border border-gray-600 p-2">FilePizza</th>
+                        <th class="border border-gray-600 p-2">Wormhole</th>
+                        <th class="border border-gray-600 p-2">Send Anywhere</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bg-gray-700">
+                        <td class="border border-gray-600 p-2">Uses WebTorrent</td>
+                        <td class="border border-gray-600 p-2">✅ Yes</td>
+                        <td class="border border-gray-600 p-2">✅ Yes</td>
+                        <td class="border border-gray-600 p-2">❌ No</td>
+                        <td class="border border-gray-600 p-2">❌ No</td>
+                    </tr>
+                    <tr class="bg-gray-800">
+                        <td class="border border-gray-600 p-2">P2P File Sharing</td>
+                        <td class="border border-gray-600 p-2">✅ Yes</td>
+                        <td class="border border-gray-600 p-2">✅ Yes</td>
+                        <td class="border border-gray-600 p-2">✅ Yes</td>
+                        <td class="border border-gray-600 p-2">✅ Yes</td>
+                    </tr>
+                    <tr class="bg-gray-700">
+                        <td class="border border-gray-600 p-2">Encryption</td>
+                        <td class="border border-gray-600 p-2">❌ No</td>
+                        <td class="border border-gray-600 p-2">❌ No</td>
+                        <td class="border border-gray-600 p-2">✅ Yes</td>
+                        <td class="border border-gray-600 p-2">✅ Yes</td>
+                    </tr>
+                    <tr class="bg-gray-800">
+                        <td class="border border-gray-600 p-2">File Expiry</td>
+                        <td class="border border-gray-600 p-2">⏳ 1 minute</td>
+                        <td class="border border-gray-600 p-2">❌ No</td>
+                        <td class="border border-gray-600 p-2">✅ 24 hours</td>
+                        <td class="border border-gray-600 p-2">✅ Temporary storage</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</body>
+</html>

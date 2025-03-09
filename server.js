@@ -8,26 +8,26 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-const fileLinks = new Map(); // Stores short IDs with magnet links
+const fileLinks = new Map(); 
 
-const LINK_EXPIRY_TIME = 5 * 60 * 1000; // 5 minutes (adjust as needed)
+const LINK_EXPIRY_TIME = 1 * 60 * 1000; 
 
-// Rate limiter to prevent abuse
+
 const limiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minute window
-    max: 10, // Limit each IP to 10 requests per window
+    windowMs: 1 * 60 * 1000, 
+    max: 10, 
     message: "Too many requests, please try again later.",
 });
 
 app.use(express.static("public"));
 app.use("/share", limiter);
 
-// Generate a short random ID for the magnet link
+
 function generateShortID() {
     return crypto.randomBytes(3).toString("hex");
 }
 
-// Validate magnet links properly
+
 function isValidMagnet(magnet) {
     return /^magnet:\?xt=urn:[a-z0-9]+:[a-zA-Z0-9]{20,}/.test(magnet);
 }
@@ -52,10 +52,10 @@ wss.on("connection", (ws) => {
                     expiresAt: Date.now() + LINK_EXPIRY_TIME
                 });
 
-                // Send short URL back to the client
+               
                 ws.send(JSON.stringify({ type: "shortURL", url: `https://magnetdrop.onrender.com/share/${shortID}` }));
 
-                // Schedule automatic deletion
+                
                 setTimeout(() => {
                     fileLinks.delete(shortID);
                     console.log(`Deleted expired link: ${shortID}`);
@@ -71,7 +71,7 @@ wss.on("connection", (ws) => {
     });
 });
 
-// Endpoint to retrieve magnet link
+
 app.get("/share/:id", (req, res) => {
     const shortID = req.params.id;
     const linkData = fileLinks.get(shortID);
@@ -83,7 +83,7 @@ app.get("/share/:id", (req, res) => {
     }
 });
 
-// Start server
+
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
