@@ -62,8 +62,13 @@
                 socket.onmessage = (event) => {
                     const data = JSON.parse(event.data);
                     if (data.type === "shortURL") {
-                        document.getElementById("shareLink").innerHTML = `<a href="${data.url}" target="_blank" class="text-blue-400 hover:underline">${data.url}</a>`;
-                        generateQRCode(data.url);
+                        try {
+                            const safeUrl = new URL(data.url);
+                            document.getElementById("shareLink").innerHTML = `<a href="${safeUrl.href}" target="_blank" class="text-blue-400 hover:underline">${safeUrl.href}</a>`;
+                            generateQRCode(safeUrl.href);
+                        } catch (e) {
+                            console.error("Invalid URL received:", data.url);
+                        }
                     }
                 };
                 document.getElementById("status").innerText = "Share this link to download!";
