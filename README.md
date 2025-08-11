@@ -52,6 +52,9 @@ If you are the only seeder, the file becomes **unavailable**. If others are down
 - ✅ Implement **end-to-end encryption** for enhanced security.
 - ✅ Add **password-protected links** for safer sharing.
 - ✅ Enable **multi-peer support** for better performance.
+  
+## Dont know how to use it ? 
+### checkout this : https://limewire.com/d/PLIDk#JUkNLBkTje
 
 ## Installation
 ### Clone the Repository
