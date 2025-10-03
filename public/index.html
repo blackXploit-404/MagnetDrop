@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MagnetDrop - Instant File Sharing</title>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <script src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MagnetDrop - Instant File Sharing</title>
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<script src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white px-4">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center px-4">
 
-    <div class="absolute top-4 right-4 flex gap-3">
+<header class="w-full max-w-3xl flex justify-between items-center py-4">
+    <h1 class="text-2xl font-bold flex items-center gap-2">
+        <i class="ph ph-paper-plane-tilt"></i> MagnetDrop
+    </h1>
+    <div class="flex gap-3">
         <a href="features.html" class="bg-gray-800 px-3 py-1 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-700 transition">
             ❓ How It Works
         </a>
@@ -20,101 +24,224 @@
             <i class="ph ph-github"></i> Star on GitHub ⭐
         </a>
     </div>
+</header>
 
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-lg text-center animate-fade-in">
-        <h2 class="text-3xl font-bold mb-4 flex items-center justify-center gap-2">
-            <i class="ph ph-paper-plane-tilt"></i> MagnetDrop
-        </h2>
-        <p class="text-gray-400 mb-4">Share files instantly using Magnet Links!</p>
 
-        <div class="flex flex-col items-center gap-3">
-            <input type="file" id="fileInput" class="p-2 rounded bg-gray-700 text-white border border-gray-600">
-            <button onclick="shareFile()" class="px-4 py-2 bg-blue-500 rounded-lg shadow-md flex items-center gap-2 hover:bg-blue-600 transition">
-                <i class="ph ph-share-fat"></i> Share File
-            </button>
-        </div>
-
-        <p id="status" class="mt-4 text-green-400 font-semibold"></p>
-        <p id="fileInfo" class="text-gray-300"></p>
-        <p id="shareLink" class="text-blue-400"></p>
-
-        <div id="qrCode" class="mt-4 flex justify-center"></div>
-
-        <button id="downloadBtn" class="hidden mt-4 px-4 py-2 bg-green-500 rounded-lg shadow-md flex items-center gap-2 hover:bg-green-600 transition justify-center" onclick="startDownload()">
-            <i class="ph ph-download-simple"></i> Download File
+<div class="bg-gray-800 p-6 rounded-2xl shadow-2xl w-full max-w-3xl animate-fade-in flex flex-col gap-6">
+    
+    
+    <p class="text-gray-400 text-center text-lg">Share files instantly using Magnet Links!</p>
+    
+    
+    <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+        <input type="file" id="fileInput" multiple class="p-2 rounded-lg bg-gray-700 border border-gray-600 text-white w-full md:w-auto">
+        <button onclick="shareFiles()" class="px-5 py-2 bg-blue-500 rounded-lg shadow-md flex items-center gap-2 hover:bg-blue-600 transition">
+            <i class="ph ph-share-fat"></i> Share Files
         </button>
     </div>
 
-    <script>
-        const client = new WebTorrent();
-        const socket = new WebSocket("wss://magnetdrop.onrender.com");
 
-        function shareFile() {
-            const file = document.getElementById("fileInput").files[0];
-            if (!file) return alert("Select a file!");
+    <div id="filePreview" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"></div>
 
-            client.seed(file, (torrent) => {
-                const magnetURI = torrent.magnetURI;
-                socket.send(JSON.stringify({ type: "share", magnet: magnetURI }));
+    
+    <div class="w-full mt-4">
+        <div id="progressContainer" class="hidden w-full bg-gray-700 rounded-full h-5">
+            <div id="progressBar" class="bg-green-500 h-5 rounded-full w-0 transition-all duration-300"></div>
+        </div>
+    </div>
 
-                document.getElementById("fileInfo").innerText = `File: ${file.name}`;
-                document.getElementById("status").innerText = "Share this link to download!";
+   
+    <div class="flex flex-col items-center gap-2">
+        <p id="status" class="text-green-400 font-semibold"></p>
+        <p id="fileInfo" class="text-gray-300 text-sm text-center break-words"></p>
+        <p id="shareLink" class="text-blue-400 text-sm text-center break-words"></p>
+        <div id="qrCode" class="mt-2"></div>
+    </div>
 
-                socket.onmessage = (event) => {
-                    const data = JSON.parse(event.data);
-                    if (data.type === "shortURL") {
-                        try {
-                            const safeUrl = new URL(data.url);
-                            document.getElementById("shareLink").innerHTML = `<a href="${safeUrl.href}" target="_blank" class="text-blue-400 hover:underline">${safeUrl.href}</a>`;
-                            generateQRCode(safeUrl.href);
-                        } catch (e) {
-                            console.error("Invalid URL received:", data.url);
-                        }
-                    }
-                };
+    
+    <button id="downloadBtn" class="hidden mt-4 px-5 py-2 bg-green-500 rounded-lg shadow-md flex items-center gap-2 hover:bg-green-600 transition justify-center">
+        <i class="ph ph-download-simple"></i> Download File(s)
+    </button>
+</div>
+
+<script>
+const client = new WebTorrent();
+const socket = new WebSocket("wss://magnetdrop.onrender.com");
+//const socket = new WebSocket("ws://localhost:3000");
+const reliableTrackers = [
+    "wss://tracker.openwebtorrent.com",
+    "wss://tracker.webtorrent.io",
+    "wss://tracker.webtorrent.dev"
+];
+
+function enhanceMagnetURI(magnetURI) {
+    let enhancedURI = magnetURI;
+    reliableTrackers.forEach(tracker => {
+        if (!enhancedURI.includes(tracker)) {
+            enhancedURI += `&tr=${encodeURIComponent(tracker)}`;
+        }
+    });
+    return enhancedURI;
+}
+
+function previewFiles(files) {
+    const previewContainer = document.getElementById("filePreview");
+    previewContainer.innerHTML = "";
+    files.forEach(file => {
+        const fileType = file.type;
+        const fileDiv = document.createElement("div");
+        fileDiv.classList.add("bg-gray-700", "p-2", "rounded-lg", "shadow-sm");
+
+        if (fileType.startsWith("image/")) {
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(file);
+            img.classList.add("w-full", "rounded");
+            fileDiv.appendChild(img);
+        } else if (fileType.startsWith("video/")) {
+            const video = document.createElement("video");
+            video.src = URL.createObjectURL(file);
+            video.controls = true;
+            video.classList.add("w-full", "rounded");
+            fileDiv.appendChild(video);
+        } else if (fileType.startsWith("audio/")) {
+            const audio = document.createElement("audio");
+            audio.src = URL.createObjectURL(file);
+            audio.controls = true;
+            fileDiv.appendChild(audio);
+        } else if (fileType === "text/plain") {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const pre = document.createElement("pre");
+                pre.textContent = e.target.result.slice(0, 500);
+                pre.classList.add("text-xs", "overflow-x-auto");
+                fileDiv.appendChild(pre);
+            };
+            reader.readAsText(file);
+        } else {
+            const p = document.createElement("p");
+            p.textContent = `File: ${file.name}`;
+            fileDiv.appendChild(p);
+        }
+
+        previewContainer.appendChild(fileDiv);
+    });
+}
+
+function shareFiles() {
+    const files = Array.from(document.getElementById("fileInput").files);
+    if (!files.length) return alert("Select at least one file!");
+    previewFiles(files);
+
+    client.seed(files, { announce: reliableTrackers }, torrent => {
+        const enhancedMagnetURI = enhanceMagnetURI(torrent.magnetURI);
+        socket.send(JSON.stringify({ type: "share", magnet: enhancedMagnetURI }));
+        document.getElementById("fileInfo").innerText = `Files: ${files.map(f => f.name).join(", ")}`;
+        document.getElementById("status").innerText = "Share this link to download!";
+        document.getElementById("progressContainer").classList.remove("hidden");
+
+        torrent.on('upload', () => {
+            const progress = (torrent.progress * 100).toFixed(1);
+            document.getElementById("progressBar").style.width = `${progress}%`;
+        });
+
+        socket.onmessage = event => {
+            const data = JSON.parse(event.data);
+            if (data.type === "shortURL") {
+                try {
+                    const safeUrl = new URL(data.url);
+                    document.getElementById("shareLink").innerHTML = `<a href="${safeUrl.href}" target="_blank" class="text-blue-400 hover:underline">${safeUrl.href}</a>`;
+                    generateQRCode(safeUrl.href);
+                } catch { console.error("Invalid URL:", data.url); }
+            }
+        };
+    });
+}
+
+let receivedTorrent;
+function autoDownload(magnetURI) {
+    const enhancedMagnetURI = enhanceMagnetURI(magnetURI);
+    client.add(enhancedMagnetURI, { announce: reliableTrackers }, torrent => {
+        receivedTorrent = torrent;
+        document.getElementById("downloadBtn").classList.remove("hidden");
+        document.getElementById("progressContainer").classList.remove("hidden");
+        document.getElementById("fileInfo").innerText = `Files: ${torrent.files.map(f => f.name).join(", ")}`;
+
+        
+        torrent.files.forEach(file => {
+            const fileType = file.name.split('.').pop().toLowerCase();
+            const previewDiv = document.createElement("div");
+            previewDiv.classList.add("bg-gray-700", "p-2", "rounded-lg", "shadow-sm");
+
+            file.getBlobURL((err, url) => {
+                if (err) return;
+                if (['png','jpg','jpeg','gif'].includes(fileType)) {
+                    const img = document.createElement("img"); img.src = url; img.classList.add("w-full","rounded"); previewDiv.appendChild(img);
+                } else if (['mp4','webm','ogg'].includes(fileType)) {
+                    const video = document.createElement("video"); video.src = url; video.controls = true; video.classList.add("w-full","rounded"); previewDiv.appendChild(video);
+                } else if (['mp3','wav','ogg'].includes(fileType)) {
+                    const audio = document.createElement("audio"); audio.src = url; audio.controls = true; previewDiv.appendChild(audio);
+                } else {
+                    const p = document.createElement("p"); p.textContent = `File: ${file.name}`; previewDiv.appendChild(p);
+                }
+                document.getElementById("filePreview").appendChild(previewDiv);
             });
+        });
+
+function monitorSeeder(torrent) {
+    const seederCheckInterval = setInterval(() => {
+        const hasSeeders = torrent.numPeers > 0;
+        if (!hasSeeders) {
+            document.getElementById("status").innerText = "Seeder has gone offline. File is unavailable.";
+            document.getElementById("downloadBtn").classList.add("hidden");
         }
+    }, 2000); // check every 2 seconds
 
-        let receivedFile;
+    torrent.on('done', () => clearInterval(seederCheckInterval)); 
+}
 
-        function autoDownload(magnet) {
-            client.add(magnet, (torrent) => {
-                receivedFile = torrent.files[0];
-                document.getElementById("fileInfo").innerText = `File: ${receivedFile.name}`;
-                document.getElementById("downloadBtn").classList.remove("hidden");
-                document.getElementById("status").innerText = "Ready to download!";
-            });
-        }
 
-        function startDownload() {
-            if (!receivedFile) return;
-            receivedFile.getBlobURL((err, url) => {
-                if (err) return console.error(err);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = receivedFile.name;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            });
-        }
+monitorSeeder(torrent);
 
-        function generateQRCode(url) {
-            document.getElementById("qrCode").innerHTML = "";
-            new QRCode(document.getElementById("qrCode"), {
-                text: url,
-                width: 128,
-                height: 128,
-                colorDark: "#ffffff",
-                colorLight: "#1e293b"
-            });
-        }
+        torrent.on('download', () => {
+            const progress = (torrent.progress * 100).toFixed(1);
+            document.getElementById("progressBar").style.width = `${progress}%`;
+            document.getElementById("status").innerText = `Downloading... ${progress}%`;
+        });
+        torrent.on('done', () => {
+            document.getElementById("status").innerText = "Download complete!";
+            document.getElementById("progressBar").style.width = "100%";
+        });
+    });
+}
 
-        const params = new URLSearchParams(window.location.search);
-        if (params.has("magnet")) {
-            autoDownload(decodeURIComponent(params.get("magnet")));
-        }
-    </script>
+function startDownload() {
+    if (!receivedTorrent) return;
+    receivedTorrent.files.forEach(file => {
+        file.getBlobURL((err, url) => {
+            if (err) return;
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = file.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    });
+}
 
+function generateQRCode(url) {
+    document.getElementById("qrCode").innerHTML = "";
+    new QRCode(document.getElementById("qrCode"), { text: url, width: 128, height: 128, colorDark: "#ffffff", colorLight: "#1e293b" });
+}
+
+
+const params = new URLSearchParams(window.location.search);
+if (params.has("magnet")) autoDownload(decodeURIComponent(params.get("magnet")));
+
+
+client.on("error", err => document.getElementById("status").innerText = "Error: Could not connect to trackers.");
+client.on("warning", err => console.warn(err));
+</script>
 </body>
 </html>

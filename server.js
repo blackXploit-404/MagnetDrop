@@ -55,7 +55,7 @@ wss.on("connection", (ws) => {
                
                 ws.send(JSON.stringify({ type: "shortURL", url: `https://magnetdrop.onrender.com/share/${shortID}` }));
 
-                
+                //ws.send(JSON.stringify({ type: "shortURL", url: `http://localhost:3000/share/${shortID}` }));
                 setTimeout(() => {
                     fileLinks.delete(shortID);
                     console.log(`Deleted expired link: ${shortID}`);
