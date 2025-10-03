@@ -242,6 +242,8 @@ if (params.has("magnet")) autoDownload(decodeURIComponent(params.get("magnet")))
 
 client.on("error", err => document.getElementById("status").innerText = "Error: Could not connect to trackers.");
 client.on("warning", err => console.warn(err));
+// ✅ Fix download button
+document.getElementById("downloadBtn").addEventListener("click", startDownload);
 </script>
 </body>
 </html>
