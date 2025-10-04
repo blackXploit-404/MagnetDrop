@@ -9,7 +9,7 @@
 ![WebTorrent](https://img.shields.io/badge/WebTorrent-P2P-red?style=for-the-badge) ![WebRTC](https://img.shields.io/badge/WebRTC-RealTime-blue?style=for-the-badge) ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow?style=for-the-badge) ![Node.js](https://img.shields.io/badge/Node.js-Backend-green?style=for-the-badge)
 
 <video width="400" controls>
-  <source src="/assets/demo.mp4" type="video/mp4">
+  <source src="https://res.cloudinary.com/dgxxrnmkt/video/upload/v1759586888/video_20251003_232624_edit-2_hjtfp9.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
