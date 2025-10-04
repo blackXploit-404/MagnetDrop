@@ -8,6 +8,10 @@
 
 ![WebTorrent](https://img.shields.io/badge/WebTorrent-P2P-red?style=for-the-badge) ![WebRTC](https://img.shields.io/badge/WebRTC-RealTime-blue?style=for-the-badge) ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow?style=for-the-badge) ![Node.js](https://img.shields.io/badge/Node.js-Backend-green?style=for-the-badge)
 
+<video width="400" controls>
+  <source src="/assets/demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 A lightweight, privacy-focused web app for **instant, ephemeral P2P file sharing** using magnet links. Share audio, videos, images, or any files peer-to-peer without uploading to servers—links auto-expire in 1 minute for zero traces. Built with Node.js, Express, and WebSockets for real-time magic.
 
