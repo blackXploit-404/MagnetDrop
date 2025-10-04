@@ -11,7 +11,7 @@
 <video width="400" controls>
   <source src="https://res.cloudinary.com/dgxxrnmkt/video/upload/v1759586888/video_20251003_232624_edit-2_hjtfp9.mp4" type="video/mp4">
   Your browser does not support the video tag.
-</video>
+</video> 
 
 A lightweight, privacy-focused web app for **instant, ephemeral P2P file sharing** using magnet links. Share audio, videos, images, or any files peer-to-peer without uploading to servers—links auto-expire in 1 minute for zero traces. Built with Node.js, Express, and WebSockets for real-time magic.
 
