@@ -7,12 +7,12 @@
 ![Powered by Render](https://img.shields.io/badge/Powered%20by-Render-blue?style=for-the-badge)
 
 ![WebTorrent](https://img.shields.io/badge/WebTorrent-P2P-red?style=for-the-badge) ![WebRTC](https://img.shields.io/badge/WebRTC-RealTime-blue?style=for-the-badge) ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow?style=for-the-badge) ![Node.js](https://img.shields.io/badge/Node.js-Backend-green?style=for-the-badge)
-
+<img src="https://img.shields.io/liberapay/patrons/blackXploit.svg?logo=liberapay">
 <video width="500" controls>
   <source src="https://res.cloudinary.com/dgxxrnmkt/video/upload/v1759586888/video_20251003_232624_edit-2_hjtfp9.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video> 
-<script src="https://liberapay.com/blackXploit/widgets/receiving.js"></script>
+
 A lightweight, privacy-focused web app for **instant, ephemeral P2P file sharing** using magnet links. Share audio, videos, images, or any files peer-to-peer without uploading to servers—links auto-expire in 1 minute for zero traces. Built with Node.js, Express, and WebSockets for real-time magic.
 
 **Why MagnetDrop?** In a world of bloated cloud services, MagnetDrop keeps it simple: Select files client-side, generate a torrent magnet, share a short URL, and let P2P do the rest. Perfect for quick, secure drops like a video clip in a chat or a photo album that vanishes fast.
